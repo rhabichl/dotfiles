@@ -19,6 +19,13 @@ return require('packer').startup(function(use)
   --        vim.cmd('colorscheme rose-pine')
   --    end
   --})
+  use 'mfussenegger/nvim-dap'
+  use "nvim-neotest/nvim-nio" 
+  use 'theHamsta/nvim-dap-virtual-text'
+  use 'leoluz/nvim-dap-go'
+  use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} }
+
+
   use "nvim-lua/plenary.nvim" -- don't forget to add this one if you don't have it yet!
   use {
       "ThePrimeagen/harpoon",
