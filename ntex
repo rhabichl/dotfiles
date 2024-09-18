@@ -1,0 +1,69 @@
+#!/bin/bash
+
+DOC_BASE=/mnt/d/latex/papers/
+
+NAME=""
+EMAIL=""
+INSTITUE=""
+
+BOILERPLATE=$(cat << EOL
+\documentclass[a4paper]{article}
+\usepackage[affil-it]{authblk} 
+\usepackage{biblatex}
+\usepackage{hyperref}
+\addbibresource{refs.bib}
+\usepackage{graphicx}
+\begin{document}
+
+\title{$1}
+\author{$NAME \thanks{Electronic address: \texttt{$EMAIL}; Corresponding author}}
+\date{Dated: \today}
+\affil{$INSTITUE}
+
+\makeatletter
+\def\@maketitle{%
+  \newpage
+  \null
+  \vskip 2em%
+  \begin{center}%
+  \let \footnote \thanks
+    {\Large\bfseries \@title \par}%
+    \vskip 1.5em%
+    {\normalsize
+      \lineskip .5em%
+      \begin{tabular}[t]{c}%
+        \@author
+      \end{tabular}\par}%
+    \vskip 1em%
+    {\normalsize \@date}%
+  \end{center}%
+  \par
+  \vskip 1.5em}
+\makeatother
+
+\maketitle
+\newpage
+\section{Introduction} 
+
+\end{document}
+EOL)
+
+MFILE=$(cat << EOL 
+paper.pdf: paper.tex
+\tpdflatex paper.tex
+\tbiber paper
+\tpdflatex paper.tex
+\tpdflatex paper.tex
+EOL)
+
+if [ ! -e $DOC_BASE/$1 ];then
+    mkdir -p "$DOC_BASE/$1"
+
+    touch $DOC_BASE/$1/paper.tex
+    touch $DOC_BASE/$1/Makefile
+    touch $DOC_BASE/$1/refs.bib
+    echo "$BOILERPLATE" >> $DOC_BASE/$1/paper.tex
+    echo -e "$MFILE" >> $DOC_BASE/$1/Makefile
+fi
+cd $DOC_BASE/$1
+nvim $DOC_BASE/$1/paper.tex
